@@ -41,7 +41,13 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: true, // Para GitHub Pages
   },
+  
+  // Configuración para GitHub Pages
+  output: 'export',
+  trailingSlash: true,
+  
   // Configuración de seguridad
   async headers() {
     return [
