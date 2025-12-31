@@ -6,7 +6,7 @@ interface InteractiveMapProps {
   address?: string;
 }
 
-export default function InteractiveMap({ latitude, longitude, address }: InteractiveMapProps) {
+export default function InteractiveMap({ latitude, longitude }: InteractiveMapProps) {
   // Crear la URL para Google Maps iframe
   const mapUrl = `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
 

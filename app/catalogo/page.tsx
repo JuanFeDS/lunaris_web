@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 import { buildApiUrl } from '@/lib/api-config';
 import ProductModal from '@/components/ProductModal';
@@ -182,14 +183,17 @@ export default function CatalogPage() {
             >
               <div className="aspect-w-1 aspect-h-1 w-full bg-gray-200 dark:bg-dark-bg-primary">
                 {product.image && product.image !== "/images/placeholder.jpg" ? (
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-full h-48 object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = "/images/placeholder.jpg";
-                    }}
-                  />
+                  <div className="relative w-full h-48">
+                    <Image 
+                      src={product.image} 
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "/images/placeholder.jpg";
+                      }}
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-48 bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
                     <span className="text-gray-500 dark:text-dark-text-secondary text-sm">

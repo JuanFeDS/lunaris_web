@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 
 interface Product {
@@ -30,7 +31,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
     if (product) {
       setQuantity(1);
     }
-  }, [product?.id]);
+  }, [product]);
 
   if (!product || !isOpen) return null;
 
@@ -81,10 +82,11 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
             {/* Imagen */}
             <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-bg-primary dark:to-dark-bg-primary rounded-lg overflow-hidden relative">
               {product.image && product.image !== "/images/placeholder.jpg" ? (
-                <img 
+                <Image 
                   src={product.image} 
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                   onError={(e) => {
                     e.currentTarget.src = "/images/placeholder.jpg";
                   }}
