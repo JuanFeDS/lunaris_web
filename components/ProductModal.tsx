@@ -88,7 +88,24 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                   fill
                   className="object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = "/images/placeholder.jpg";
+                    // Fallback para imágenes externas que fallan
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `
+                        <div class="w-full h-full bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
+                          <div class="text-center">
+                            <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586 1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                              Imagen no disponible
+                            </p>
+                          </div>
+                        </div>
+                      `;
+                    }
                   }}
                 />
               ) : (

@@ -190,7 +190,19 @@ export default function CatalogPage() {
                       fill
                       className="object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = "/images/placeholder.jpg";
+                        // Fallback para imágenes externas que fallan
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `
+                            <div class="w-full h-48 bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
+                              <span class="text-gray-500 dark:text-dark-text-secondary text-sm">
+                                Imagen no disponible
+                              </span>
+                            </div>
+                          `;
+                        }
                       }}
                     />
                   </div>
