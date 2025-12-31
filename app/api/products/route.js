@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 const REQUIRED_HEADERS = ["nombre", "precio", "stock", "activo"];
 
-export async function GET() {
+export async function GET(request) {
   const SHEET_ID = process.env.GOOGLE_SHEETS_ID;
   const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 
@@ -13,6 +13,12 @@ export async function GET() {
       { status: 500 }
     );
   }
+
+  // Obtener parámetros de paginación
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '12');
+  const startIndex = (page - 1) * limit;
 
   const RANGE = "Productos!A1:Z1000";
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -30,7 +36,7 @@ export async function GET() {
     const data = await res.json();
 
     if (!data.values || data.values.length < 2) {
-      return NextResponse.json(buildResponse(getFallbackProducts(), false));
+      return NextResponse.json(buildResponse(getFallbackProducts(), false, 1, 0, 12));
     }
 
     const [rawHeaders, ...rows] = data.values;
@@ -44,10 +50,10 @@ export async function GET() {
 
     if (!hasRequiredHeaders) {
       console.error("❌ Missing required headers");
-      return NextResponse.json(buildResponse(getFallbackProducts(), false));
+      return NextResponse.json(buildResponse(getFallbackProducts(), false, 1, 0, 12));
     }
 
-    const products = rows
+    const allProducts = rows
       .map((row, index) => {
         const product = Object.fromEntries(
           headers.map((h, i) => [h, row[i]?.trim() || ""])
@@ -90,25 +96,30 @@ export async function GET() {
       })
       .filter(p => p !== null); // Filtrar nulos y productos inactivos
 
-    console.log(`📈 Final result: ${products.length} active products out of ${rows.length} total`);
+    // Paginación
+    const totalProducts = allProducts.length;
+    const totalPages = Math.ceil(totalProducts / limit);
+    const paginatedProducts = allProducts.slice(startIndex, startIndex + limit);
 
-    if (products.length === 0) {
-      return NextResponse.json(buildResponse(getFallbackProducts(), false));
-    }
+    console.log(`📈 Pagination: page ${page} of ${totalPages}, showing ${paginatedProducts.length} of ${totalProducts} products`);
 
-    return NextResponse.json(buildResponse(products, true));
+    return NextResponse.json(buildResponse(paginatedProducts, true, page, totalProducts, totalPages, limit));
 
   } catch (error) {
     console.error("❌ Error fetching products:", error);
-    return NextResponse.json(buildResponse(getFallbackProducts(), false));
+    return NextResponse.json(buildResponse(getFallbackProducts(), false, 1, 0, 12));
   }
 }
 
 /* ---------- helpers ---------- */
 
-function buildResponse(products, success = true) {
+function buildResponse(products, success = true, page = 1, total = 0, totalPages = 1, limit = 12) {
   console.log("📤 API Response:", {
     success,
+    page,
+    total,
+    totalPages,
+    limit,
     productCount: products.length,
     products: products.map(p => ({ name: p.name, active: p.active }))
   });
@@ -116,7 +127,14 @@ function buildResponse(products, success = true) {
   return {
     success,
     data: products,
-    count: products.length,
+    pagination: {
+      page,
+      total,
+      totalPages,
+      limit,
+      hasNext: page < totalPages,
+      hasPrev: page > 1
+    },
     lastUpdated: new Date().toISOString()
   };
 }

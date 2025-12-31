@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { formatPrice } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -18,7 +19,14 @@ interface Product {
 interface ApiResponse {
   success: boolean;
   data: Product[];
-  count: number;
+  pagination: {
+    page: number;
+    total: number;
+    totalPages: number;
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
   lastUpdated: string;
   error?: string;
 }
@@ -29,37 +37,54 @@ export default function CatalogPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    total: 0,
+    totalPages: 1,
+    limit: 12,
+    hasNext: false,
+    hasPrev: false
+  });
 
-  // Cargar productos desde la API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/products');
-        const data: ApiResponse = await response.json();
-        
-        if (data.success) {
-          setProducts(data.data);
-          setError(null);
-        } else {
-          setError(data.error || 'Error al cargar productos');
-          setProducts(data.data); // Usar productos de respaldo
-        }
-      } catch (err) {
-        setError('Error de conexión');
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
+  // Cargar productos desde la API con paginación
+  const fetchProducts = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/products?page=${page}&limit=12`);
+      const data: ApiResponse = await response.json();
+      
+      if (data.success) {
+        setProducts(data.data);
+        setPagination(data.pagination);
+        setError(null);
+      } else {
+        setError(data.error || 'Error al cargar productos');
+        setProducts(data.data); // Usar productos de respaldo
       }
-    };
+    } catch (err) {
+      setError('Error de conexión');
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchProducts();
+  // Cargar productos iniciales
+  useEffect(() => {
+    fetchProducts(1);
   }, []);
+
+  // Cambiar de página
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    fetchProducts(newPage);
+  };
 
   // Obtener categorías únicas de los productos
   const categories = ['Todos', ...Array.from(new Set(products.map(p => p.category)))];
 
-  // Filtrar productos
+  // Filtrar productos (búsqueda y categoría)
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,6 +120,9 @@ export default function CatalogPage() {
                 ⚠️ Usando catálogo de respaldo
               </span>
             )}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-dark-text-secondary mt-2">
+            Mostrando {filteredProducts.length} de {pagination.total} productos
           </p>
         </div>
 
@@ -143,7 +171,7 @@ export default function CatalogPage() {
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-dark-text-primary">{product.name}</h3>
                   <span className="text-lg font-bold bg-gradient-to-r from-brand-pink-medium to-brand-pink-vibrant bg-clip-text text-transparent">
-                    ${product.price.toFixed(2)}
+                    {formatPrice(product.price)}
                   </span>
                 </div>
                 
@@ -178,6 +206,39 @@ export default function CatalogPage() {
             </div>
           ))}
         </div>
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div className="mt-12 flex justify-center items-center space-x-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={!pagination.hasPrev}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                pagination.hasPrev
+                  ? 'bg-brand-pink-medium text-white hover:bg-brand-pink-vibrant'
+                  : 'bg-gray-300 dark:bg-dark-bg-primary text-gray-500 dark:text-dark-text-secondary cursor-not-allowed'
+              }`}
+            >
+              Anterior
+            </button>
+            
+            <span className="text-gray-600 dark:text-dark-text-secondary">
+              Página {currentPage} de {pagination.totalPages}
+            </span>
+            
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={!pagination.hasNext}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                pagination.hasNext
+                  ? 'bg-brand-pink-medium text-white hover:bg-brand-pink-vibrant'
+                  : 'bg-gray-300 dark:bg-dark-bg-primary text-gray-500 dark:text-dark-text-secondary cursor-not-allowed'
+              }`}
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
 
         {filteredProducts.length === 0 && !loading && (
           <div className="text-center py-12">
