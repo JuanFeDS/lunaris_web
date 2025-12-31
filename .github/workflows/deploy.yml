@@ -40,13 +40,24 @@ jobs:
     - name: Run tests
       run: npm test
 
-    - name: Build with Next.js
-      run: npm run build
+    - name: Build static export
+      run: npm run export
 
-    - name: Static HTML export with Next.js
+    - name: Setup GitHub Pages files
       run: |
-        npm install -g next-export-optimize-images
-        npx next build && npx next export
+        # Copiar archivos necesarios para GitHub Pages
+        cp .nojekyll out/ || true
+        cp public/_redirects out/ || true
+        
+        # Crear index.html principal si no existe
+        if [ ! -f out/index.html ]; then
+          echo "Error: index.html no fue generado"
+          exit 1
+        fi
+        
+        # Verificar contenido del export
+        echo "Archivos generados:"
+        ls -la out/
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
