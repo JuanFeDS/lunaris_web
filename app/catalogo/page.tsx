@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/utils';
+import { buildApiUrl } from '@/lib/api-config';
 import ProductModal from '@/components/ProductModal';
 
 interface Product {
@@ -54,7 +55,8 @@ export default function CatalogPage() {
   const fetchProducts = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/products?page=${page}&limit=12`);
+      const apiUrl = buildApiUrl('/api/products', { page, limit: 12 });
+      const response = await fetch(apiUrl);
       const data: ApiResponse = await response.json();
       
       if (data.success) {
