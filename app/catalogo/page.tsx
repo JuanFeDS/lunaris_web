@@ -83,12 +83,14 @@ export default function CatalogPage() {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-brand-cream dark:bg-dark-bg-primary min-h-screen transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Catálogo de Productos</h1>
-          <p className="text-lg text-gray-600">Descubre nuestra selección exclusiva</p>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-brand-pink-medium to-brand-pink-vibrant bg-clip-text text-transparent mb-4">
+            Catálogo de Productos
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-dark-text-secondary">Descubre nuestra selección exclusiva</p>
         </div>
 
         {/* Search and Filter */}
@@ -99,7 +101,7 @@ export default function CatalogPage() {
               placeholder="Buscar productos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-dark-bg-secondary rounded-lg focus:ring-2 focus:ring-brand-pink-medium focus:border-transparent bg-white dark:bg-dark-bg-secondary text-gray-900 dark:text-dark-text-primary"
             />
           </div>
           
@@ -110,8 +112,8 @@ export default function CatalogPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                    ? 'bg-brand-pink-medium text-white'
+                    : 'bg-white dark:bg-dark-bg-secondary text-gray-700 dark:text-dark-text-primary hover:bg-brand-pink-light dark:hover:bg-brand-pink-medium/20 border border-gray-300 dark:border-dark-bg-secondary'
                 }`}
               >
                 {category}
@@ -123,31 +125,33 @@ export default function CatalogPage() {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map(product => (
-            <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-w-1 aspect-h-1 w-full bg-gray-200">
-                <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  <span className="text-gray-500 text-sm">Imagen de {product.name}</span>
+            <div key={product.id} className="bg-white dark:bg-dark-bg-secondary rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="aspect-w-1 aspect-h-1 w-full bg-gray-200 dark:bg-dark-bg-primary">
+                <div className="w-full h-48 bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
+                  <span className="text-gray-500 dark:text-dark-text-secondary text-sm">Imagen de {product.name}</span>
                 </div>
               </div>
               
               <div className="p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-                  <span className="text-lg font-bold text-blue-600">${product.price}</span>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-dark-text-primary">{product.name}</h3>
+                  <span className="text-lg font-bold bg-gradient-to-r from-brand-pink-medium to-brand-pink-vibrant bg-clip-text text-transparent">
+                    ${product.price}
+                  </span>
                 </div>
                 
-                <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                <p className="text-sm text-gray-600 dark:text-dark-text-secondary mb-3">{product.description}</p>
                 
                 <div className="flex justify-between items-center">
-                  <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                  <span className="text-xs bg-brand-pink-light dark:bg-brand-pink-medium/20 text-brand-pink-medium dark:text-brand-pink-vibrant px-2 py-1 rounded-full">
                     {product.category}
                   </span>
                   <button
                     disabled={!product.inStock}
                     className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
                       product.inStock
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'bg-brand-pink-medium text-white hover:bg-brand-pink-vibrant'
+                        : 'bg-gray-300 dark:bg-dark-bg-primary text-gray-500 dark:text-dark-text-secondary cursor-not-allowed'
                     }`}
                   >
                     {product.inStock ? 'Añadir al carrito' : 'Agotado'}
@@ -160,7 +164,7 @@ export default function CatalogPage() {
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No se encontraron productos que coincidan con tu búsqueda.</p>
+            <p className="text-gray-500 dark:text-dark-text-secondary text-lg">No se encontraron productos que coincidan con tu búsqueda.</p>
           </div>
         )}
       </div>
