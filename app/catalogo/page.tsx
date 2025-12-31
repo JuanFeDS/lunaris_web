@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/utils';
+import ProductModal from '@/components/ProductModal';
 
 interface Product {
   id: string;
@@ -38,6 +39,8 @@ export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     total: 0,
@@ -79,6 +82,18 @@ export default function CatalogPage() {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     fetchProducts(newPage);
+  };
+
+  // Manejar clic en producto
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  // Cerrar modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
   };
 
   // Obtener categorías únicas de los productos
@@ -158,7 +173,11 @@ export default function CatalogPage() {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map(product => (
-            <div key={product.id} className="bg-white dark:bg-dark-bg-secondary rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div 
+              key={product.id} 
+              className="bg-white dark:bg-dark-bg-secondary rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer transform hover:scale-105 transition-transform duration-200"
+              onClick={() => handleProductClick(product)}
+            >
               <div className="aspect-w-1 aspect-h-1 w-full bg-gray-200 dark:bg-dark-bg-primary">
                 <div className="w-full h-48 bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
                   <span className="text-gray-500 dark:text-dark-text-secondary text-sm">
@@ -176,7 +195,7 @@ export default function CatalogPage() {
                 </div>
                 
                 {product.description && (
-                  <p className="text-sm text-gray-600 dark:text-dark-text-secondary mb-3">{product.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-dark-text-secondary mb-3 line-clamp-2">{product.description}</p>
                 )}
                 
                 <div className="flex justify-between items-center">
@@ -196,9 +215,14 @@ export default function CatalogPage() {
                           ? 'bg-brand-pink-medium text-white hover:bg-brand-pink-vibrant'
                           : 'bg-gray-300 dark:bg-dark-bg-primary text-gray-500 dark:text-dark-text-secondary cursor-not-allowed'
                       }`}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Evitar que se abra el modal
+                        // Aquí iría la lógica de añadir al carrito rápida
+                        console.log('Quick add to cart:', product.name);
+                      }}
                     >
-                      {product.available && product.stock > 0 ? 'Añadir al carrito' : 
-                       !product.available ? 'No disponible' : 'Agotado'}
+                      {product.available && product.stock > 0 ? 'Añadir' : 
+                       !product.available ? 'No disp.' : 'Agotado'}
                     </button>
                   </div>
                 </div>
@@ -248,6 +272,13 @@ export default function CatalogPage() {
           </div>
         )}
       </div>
+
+      {/* Product Modal */}
+      <ProductModal 
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
