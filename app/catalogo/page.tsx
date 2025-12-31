@@ -179,11 +179,22 @@ export default function CatalogPage() {
               onClick={() => handleProductClick(product)}
             >
               <div className="aspect-w-1 aspect-h-1 w-full bg-gray-200 dark:bg-dark-bg-primary">
-                <div className="w-full h-48 bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
-                  <span className="text-gray-500 dark:text-dark-text-secondary text-sm">
-                    {product.image ? 'Imagen de producto' : `Imagen de ${product.name}`}
-                  </span>
-                </div>
+                {product.image && product.image !== "/images/placeholder.jpg" ? (
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/placeholder.jpg";
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
+                    <span className="text-gray-500 dark:text-dark-text-secondary text-sm">
+                      Imagen no disponible
+                    </span>
+                  </div>
+                )}
               </div>
               
               <div className="p-4">

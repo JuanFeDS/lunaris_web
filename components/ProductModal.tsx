@@ -80,16 +80,27 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Imagen */}
             <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-bg-primary dark:to-dark-bg-primary rounded-lg overflow-hidden relative">
-              <div className="w-full h-full bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
-                <div className="text-center">
-                  <svg className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586 1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z" />
-                  </svg>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {product.image ? 'Imagen del producto' : 'Imagen no disponible'}
-                  </p>
+              {product.image && product.image !== "/images/placeholder.jpg" ? (
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/placeholder.jpg";
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-brand-pink-light to-brand-pink-soft dark:from-brand-pink-medium/20 dark:to-brand-pink-vibrant/20 flex items-center justify-center">
+                  <div className="text-center">
+                    <svg className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586 1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Imagen no disponible
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
               {product.featured && (
                 <div className="absolute top-2 left-2">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-yellow-400 text-yellow-900 shadow-lg">
