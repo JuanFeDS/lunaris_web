@@ -48,11 +48,14 @@ jobs:
 
     - name: Setup GitHub Pages files
       run: |
-        # Copiar archivos necesarios para GitHub Pages
+        # Copiar archivos necesarios para GitHub Pages (sin CNAME)
         cp .nojekyll out/ || true
         cp public/_redirects out/ || true
         
-        # Crear index.html principal si no existe
+        # Asegurarse de que no exista CNAME para usar dominio por defecto
+        rm -f out/CNAME || true
+        
+        # Verificar index.html principal
         if [ ! -f out/index.html ]; then
           echo "Error: index.html no fue generado"
           exit 1
@@ -61,6 +64,15 @@ jobs:
         # Verificar contenido del export
         echo "Archivos generados:"
         ls -la out/
+        
+        # Verificar que no hay CNAME
+        echo "Verificando ausencia de CNAME:"
+        if [ -f out/CNAME ]; then
+          echo "ERROR: CNAME encontrado, esto usará dominio personalizado"
+          exit 1
+        else
+          echo "✅ Sin CNAME - se usará dominio por defecto"
+        fi
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
