@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <div className="bg-brand-cream dark:bg-dark-bg-primary transition-colors duration-200">
@@ -11,19 +13,19 @@ export default function Home() {
             <p className="text-xl md:text-2xl mb-8 text-brand-pink-light">
               Descubre productos únicos que iluminarán tu vida
             </p>
-            <div className="space-x-4">
-              <a
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-4 sm:space-x-4">
+              <Link
                 href="/catalogo"
-                className="bg-white text-brand-pink-medium px-8 py-3 rounded-full font-semibold hover:bg-brand-cream transition-colors"
+                className="bg-white text-brand-pink-medium px-8 py-3 rounded-full font-semibold hover:bg-brand-cream transition-colors text-center w-full sm:w-auto"
               >
                 Ver Catálogo
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/contact"
-                className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-brand-pink-medium transition-colors"
+                className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-brand-pink-medium transition-colors text-center w-full sm:w-auto"
               >
                 Contáctanos
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -81,12 +83,12 @@ export default function Home() {
           <p className="text-xl mb-8 text-brand-pink-light">
             Explora nuestro catálogo y encuentra el producto perfecto para ti
           </p>
-          <a
+          <Link
             href="/catalogo"
-            className="bg-white text-brand-pink-medium px-8 py-3 rounded-full font-semibold hover:bg-brand-cream transition-colors inline-block"
+            className="bg-white text-brand-pink-medium px-8 py-3 rounded-full font-semibold hover:bg-brand-cream transition-colors inline-block text-center w-full sm:w-auto"
           >
             Explorar Catálogo
-          </a>
+          </Link>
         </div>
       </section>
     </div>
