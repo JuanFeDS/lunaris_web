@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Configuración para GitHub Pages project site (dominio por defecto)
+  basePath: '/lunaris_web',
+  assetPrefix: '/lunaris_web/',
+  
   // Configuración para optimización de imágenes
   images: {
     remotePatterns: [

@@ -71,7 +71,7 @@ jobs:
           echo "ERROR: CNAME encontrado, esto usará dominio personalizado"
           exit 1
         else
-          echo "✅ Sin CNAME - se usará dominio por defecto"
+          echo "✅ Sin CNAME - se usará dominio por defecto de GitHub Pages"
         fi
 
     - name: Upload artifact
